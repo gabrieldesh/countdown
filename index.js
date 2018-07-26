@@ -1,23 +1,17 @@
-let queryObject = parseQueryString(location.search.substring(1));
-document.querySelector('#title').innerHTML = queryObject.title || "No title";
+import parseQueryString from './parseQueryString.js';
+import dateDiff from './dateDiff.js';
 
-function parseQueryString(query) {
-    let vars = query.split("&");
-    let queryObject = {};
-    for (let i = 0; i < vars.length; i++) {
-      let pair = vars[i].split("=");
-      let key = decodeURIComponent(pair[0]);
-      let value = decodeURIComponent(pair[1]);
-      // If first entry with this name
-      if (typeof queryObject[key] === "undefined") {
-        queryObject[key] = value;
-      // If second entry with this name
-      } else if (typeof queryObject[key] === "string") {
-        queryObject[key] = [queryObject[key], value];
-      // If third or later entry with this name
-      } else {
-        queryObject[key].push(value);
-      }
-    }
-    return queryObject;
-  }
+let queryObject = parseQueryString(location.search.substring(1));
+
+document.querySelector('#title').innerHTML = queryObject.title;
+
+let finishDateTime = new Date(queryObject.date);
+
+let updateCounter = () => {
+  let {days, hours, minutes, seconds} = dateDiff(finishDateTime, Date.now());
+  let counterString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  document.querySelector('#counter').innerHTML = counterString;
+};
+
+updateCounter();
+window.setInterval(updateCounter, 1000);
