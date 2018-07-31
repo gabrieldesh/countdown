@@ -14,7 +14,7 @@ updateURL();
 
 
 function updateURL() {
-  let title = titleElement.value;
+  let title = encodeURIComponent(titleElement.value);
   let date = dateElement.value;
 
   if (date === "") {
