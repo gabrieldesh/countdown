@@ -2,11 +2,12 @@
 
 let titleElement = document.querySelector("#title");
 let dateElement = document.querySelector("#date");
-
 let outputElement = document.querySelector("#output");
 let linkElement = document.querySelector("#link");
 
-[titleElement, dateElement].forEach((inputElement) => {
+let urlOrigin = window.location.origin;
+
+[titleElement, dateElement].map((inputElement) => {
   inputElement.addEventListener("input", updateURL);
 });
 
@@ -20,7 +21,7 @@ function updateURL() {
   if (date === "") {
     outputElement.style.display = "none";
   } else {
-    let link = `http://localhost:8080/?title=${title}&date=${date}`;
+    let link = `${urlOrigin}/?title=${title}&date=${date}`;
 
     linkElement.href = link;
     linkElement.innerHTML = link;
