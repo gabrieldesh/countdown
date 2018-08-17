@@ -13,7 +13,7 @@ const finishDateTime = new Date(queryObject.date);
 let systemClockDelay = 0;
 
 const synchronizeClock = () => {
-  fetch("https://www.time.gov/actualtime.cgi")
+  return fetch("https://www.time.gov/actualtime.cgi")
     .then(response => response.text())
     .then(text => {
       const parser = new window.DOMParser();
@@ -26,10 +26,10 @@ const synchronizeClock = () => {
       // If the difference is smaller than the threshold, assume that the system time is more correct.
       if (Math.abs(difference) < delayThreshold) {
         systemClockDelay = 0;
-        console.log("Using system time.");
+        console.log(`Using system time.`);
       } else {
         systemClockDelay = difference;
-        console.log("Using time from time.gov.");
+        console.log(`Using time from time.gov.`);
       }
     });
 }
@@ -41,7 +41,22 @@ const updateCounter = () => {
   document.querySelector('#counter').innerHTML = counterString;
 };
 
-updateCounter();
-synchronizeClock();
-window.setInterval(updateCounter, 1000);
+synchronizeClock().then(() => {
+    updateCounter();
+
+
+    // Synchronize the tick of the counter with the start of the second.
+
+    const now = Date.now() + systemClockDelay;
+    const startOfNextSecond = Math.ceil(now/1000) * 1000;
+
+    // Time remaining for the start of the next second.
+    const remaining = startOfNextSecond - now;
+
+    setTimeout(() => {
+      updateCounter();
+      setInterval(updateCounter, 1000);
+    }, remaining)
+  })
+
 window.setInterval(synchronizeClock, synchronizationInterval);
